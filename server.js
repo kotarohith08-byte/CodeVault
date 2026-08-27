@@ -122,11 +122,14 @@ app.post("/api/auth/register", async (req, res) => {
       verificationExpires
     });
 
-    // Send verification email
+    console.log("USER CREATED:", user.email);
+
     await sendVerificationEmail(
       user.email,
       verificationCode
     );
+
+    console.log("EMAIL FUNCTION COMPLETED");
 
     res.status(201).json({
       message: "Account created. A verification code has been sent to your email.",
