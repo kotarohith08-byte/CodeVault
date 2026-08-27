@@ -55,3 +55,30 @@ body.dark .language{background:#312e81;color:#ddd6fe}.card-description{color:var
 .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
 .toast{position:fixed;right:22px;bottom:22px;background:#111827;color:#fff;padding:12px 17px;border-radius:10px;transform:translateY(100px);opacity:0;transition:.25s;z-index:20}.toast.show{transform:translateY(0);opacity:1}
 @media(max-width:760px){.hero{flex-direction:column;align-items:flex-start}.hero h2{font-size:27px}.stats,.code-grid{grid-template-columns:1fr}.toolbar{flex-direction:column}.toolbar select{max-width:none}.form-row{grid-template-columns:1fr}.user-name{display:none}.navbar{padding:0 4%;}}
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 50px;
+}
+
+.password-wrapper #togglePassword {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 5px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    z-index: 10;
+}

@@ -44,7 +44,11 @@
           <input id="authEmail" type="email" placeholder="you@example.com" required>
 
           <label for="authPassword">Password</label>
-          <input id="authPassword" type="password" placeholder="At least 6 characters" minlength="6" required>
+
+          <div class="password-wrapper">
+            <input id="authPassword" type="password" placeholder="At least 6 characters" minlength="6" required>
+            <button type="button" id="togglePassword">👁️</button>
+          </div>
 
           <button id="authSubmit" class="primary-btn full-btn" type="submit">Login</button>
           <p id="authMessage" class="form-message"></p>
