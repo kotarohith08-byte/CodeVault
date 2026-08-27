@@ -92,6 +92,8 @@ app.post("/api/auth/register", async (req, res) => {
     const normalizedEmail = email.toLowerCase().trim();
 
     const existing = await User.findOne({ email: normalizedEmail });
+    console.log("REGISTER EMAIL:", normalizedEmail);
+    console.log("EXISTING USER:", !!existing);
 
     if (existing) {
       return res.status(409).json({
