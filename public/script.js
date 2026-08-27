@@ -65,6 +65,16 @@ function showAuth() {
   $("logoutBtn").classList.add("hidden");
   $("userName").textContent = "";
 }
+function showVerification(email) {
+  $("authSection").classList.add("hidden");
+  $("appSection").classList.add("hidden");
+  $("verificationSection").classList.remove("hidden");
+
+  $("verificationEmail").textContent = email;
+  $("verificationCode").value = "";
+  $("verificationMessage").textContent = "";
+  $("verificationCode").focus();
+}
 
 async function loadCodes() {
   codes = await api("/codes", { headers: headers() });
@@ -173,6 +183,15 @@ $("authForm").addEventListener("submit", async e => {
       body: JSON.stringify(payload)
     });
 
+    if (authMode === "register") {
+      $("authForm").reset();
+
+      showVerification(data.user.email);
+
+      showToast("Verification code sent!");
+      return;
+    }
+
     token = data.token;
     currentUser = data.user;
     localStorage.setItem("codevault_token", token);
@@ -180,7 +199,7 @@ $("authForm").addEventListener("submit", async e => {
     $("authForm").reset();
     showApp();
     await loadCodes();
-    showToast(authMode === "register" ? "Account created!" : "Logged in!");
+    showToast("Logged in!");
   } catch (error) {
     $("authMessage").textContent = error.message;
   }
@@ -319,5 +338,53 @@ togglePassword.addEventListener("click", function () {
         togglePassword.textContent = "👁️";
     }
 });
+// Email verification
+$("verificationForm").addEventListener("submit", async e => {
+  e.preventDefault();
 
+  const email = $("verificationEmail").textContent.trim();
+  const code = $("verificationCode").value.trim();
+
+  if (!/^\d{6}$/.test(code)) {
+    $("verificationMessage").textContent =
+      "Please enter a valid 6-digit verification code.";
+    return;
+  }
+
+  try {
+    const data = await api("/auth/verify-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        code
+      })
+    });
+
+    $("verificationMessage").textContent = data.message;
+
+    showToast("Email verified successfully!");
+
+    setTimeout(() => {
+      $("verificationSection").classList.add("hidden");
+      $("authSection").classList.remove("hidden");
+
+      setAuthMode("login");
+
+      $("authEmail").value = email;
+    }, 1000);
+
+  } catch (error) {
+    $("verificationMessage").textContent = error.message;
+  }
+});
+
+$("backToLoginBtn").addEventListener("click", () => {
+  $("verificationSection").classList.add("hidden");
+  $("authSection").classList.remove("hidden");
+
+  setAuthMode("login");
+});
 startApp();

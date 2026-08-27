@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+const sendVerificationEmail = require("./utils/sendEmail");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,8 +18,16 @@ app.use(express.static(path.join(__dirname, "public")));
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true, maxlength: 60 },
+
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    passwordHash: { type: String, required: true }
+
+    passwordHash: { type: String, required: true },
+
+    emailVerified: { type: Boolean, default: false },
+
+    verificationCode: { type: String },
+
+    verificationExpires: { type: Date }
   },
   { timestamps: true }
 );
@@ -69,39 +78,134 @@ app.post("/api/auth/register", async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email and password are required." });
+      return res.status(400).json({
+        message: "Name, email and password are required."
+      });
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters." });
+      return res.status(400).json({
+        message: "Password must be at least 6 characters."
+      });
     }
 
     const normalizedEmail = email.toLowerCase().trim();
+
     const existing = await User.findOne({ email: normalizedEmail });
 
     if (existing) {
-      return res.status(409).json({ message: "An account with this email already exists." });
+      return res.status(409).json({
+        message: "An account with this email already exists."
+      });
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
+
+    // Generate 6-digit verification code
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    // Code expires after 10 minutes
+    const verificationExpires = new Date(
+      Date.now() + 10 * 60 * 1000
+    );
+
     const user = await User.create({
       name: name.trim(),
       email: normalizedEmail,
-      passwordHash
+      passwordHash,
+      emailVerified: false,
+      verificationCode,
+      verificationExpires
     });
 
-    const token = createToken(user);
+    // Send verification email
+    await sendVerificationEmail(
+      user.email,
+      verificationCode
+    );
 
     res.status(201).json({
-      token,
-      user: { id: user._id, name: user.name, email: user.email }
+      message: "Account created. A verification code has been sent to your email.",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
     });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Could not create the account." });
+    console.error("Registration error:", error);
+
+    res.status(500).json({
+      message: "Could not create the account."
+    });
   }
 });
+// Verify Email
+app.post("/api/auth/verify-email", async (req, res) => {
+  try {
+    const { email, code } = req.body;
 
+    if (!email || !code) {
+      return res.status(400).json({
+        message: "Email and verification code are required."
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found."
+      });
+    }
+
+    if (user.emailVerified) {
+      return res.status(400).json({
+        message: "Email is already verified."
+      });
+    }
+
+    if (!user.verificationCode || !user.verificationExpires) {
+      return res.status(400).json({
+        message: "No verification code found. Please register again."
+      });
+    }
+
+    if (new Date() > user.verificationExpires) {
+      return res.status(400).json({
+        message: "Verification code has expired. Please register again."
+      });
+    }
+
+    if (code.toString().trim() !== user.verificationCode) {
+      return res.status(400).json({
+        message: "Invalid verification code."
+      });
+    }
+
+    user.emailVerified = true;
+    user.verificationCode = undefined;
+    user.verificationExpires = undefined;
+
+    await user.save();
+
+    res.json({
+      message: "Email verified successfully."
+    });
+
+  } catch (error) {
+    console.error("Email verification error:", error);
+
+    res.status(500).json({
+      message: "Could not verify email."
+    });
+  }
+});
 // Login
 app.post("/api/auth/login", async (req, res) => {
   try {
