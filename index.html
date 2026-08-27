@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeVault - Code Storage</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="brand">
+      <span class="logo">&lt;/&gt;</span>
+      <div>
+        <h1>CodeVault</h1>
+        <p>My Personal Code Storage</p>
+      </div>
+    </div>
+    <button id="themeBtn" class="icon-btn" title="Toggle theme">🌙</button>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <span class="badge">PERSONAL PROJECT</span>
+        <h2>Store. Search. Reuse.</h2>
+        <p>Keep your programming solutions organized in one place.</p>
+      </div>
+      <button id="newCodeBtn" class="primary-btn">+ Add New Code</button>
+    </section>
+
+    <section class="stats">
+      <div class="stat-card">
+        <span>Total Codes</span>
+        <strong id="totalCodes">0</strong>
+      </div>
+      <div class="stat-card">
+        <span>Languages</span>
+        <strong id="totalLanguages">0</strong>
+      </div>
+      <div class="stat-card">
+        <span>Last Added</span>
+        <strong id="lastAdded">—</strong>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <input id="searchInput" type="search" placeholder="🔍 Search by title, language or code...">
+      <select id="filterLanguage">
+        <option value="all">All Languages</option>
+        <option value="python">Python</option>
+        <option value="javascript">JavaScript</option>
+        <option value="java">Java</option>
+        <option value="cpp">C++</option>
+        <option value="c">C</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="other">Other</option>
+      </select>
+    </section>
+
+    <section id="codeList" class="code-grid"></section>
+
+    <section id="emptyState" class="empty-state">
+      <div class="empty-icon">💻</div>
+      <h3>No codes saved yet</h3>
+      <p>Add your first program and start building your personal code library.</p>
+      <button class="primary-btn" id="emptyAddBtn">Add Your First Code</button>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle">Add New Code</h2>
+          <p>Save a reusable coding solution.</p>
+        </div>
+        <button id="closeModal" class="close-btn">&times;</button>
+      </div>
+
+      <form id="codeForm">
+        <input type="hidden" id="codeId">
+
+        <label for="title">Code Title</label>
+        <input id="title" type="text" placeholder="Example: Check Prime Number" required>
+
+        <div class="form-row">
+          <div>
+            <label for="language">Language</label>
+            <select id="language" required>
+              <option value="python">Python</option>
+              <option value="javascript">JavaScript</option>
+              <option value="java">Java</option>
+              <option value="cpp">C++</option>
+              <option value="c">C</option>
+              <option value="html">HTML</option>
+              <option value="css">CSS</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="category">Category</label>
+            <input id="category" type="text" placeholder="Loops, DSA, Web...">
+          </div>
+        </div>
+
+        <label for="description">Description</label>
+        <textarea id="description" rows="2" placeholder="What does this program do?"></textarea>
+
+        <label for="code">Code</label>
+        <textarea id="code" class="code-input" rows="14"
+          placeholder="Write or paste your code here..." required></textarea>
+
+        <div class="form-actions">
+          <button type="button" id="cancelBtn" class="secondary-btn">Cancel</button>
+          <button type="submit" class="primary-btn">Save Code</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

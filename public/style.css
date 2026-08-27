@@ -1,0 +1,57 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:#f5f7fb; --card:#fff; --text:#172033; --muted:#697386;
+  --border:#e1e6ef; --primary:#4f46e5; --code-bg:#111827;
+  --shadow:0 10px 30px rgba(25,35,55,.08);
+}
+body.dark {
+  --bg:#0d1117; --card:#161b22; --text:#f0f6fc; --muted:#9da7b3;
+  --border:#30363d; --code-bg:#090c10; --shadow:0 10px 30px rgba(0,0,0,.3);
+}
+body { font-family:Inter,Segoe UI,Arial,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.navbar { height:76px; background:var(--card); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 6%; }
+.brand,.nav-actions { display:flex; align-items:center; gap:12px; }
+.logo { width:46px;height:46px;display:grid;place-items:center;border-radius:12px;background:var(--primary);color:#fff;font-weight:800;font-family:Consolas,monospace; }
+.brand h1 { font-size:21px; }.brand p { font-size:12px;color:var(--muted); }
+.user-name { font-size:13px;font-weight:700; }
+.container { width:min(1180px,92%);margin:30px auto 60px; }
+.hidden { display:none !important; }
+.auth-section { min-height:75vh; display:grid; place-items:center; }
+.auth-card { width:min(430px,100%); background:var(--card); border:1px solid var(--border); border-radius:20px; padding:30px; box-shadow:var(--shadow); text-align:center; }
+.auth-icon { width:60px;height:60px;margin:0 auto 15px;display:grid;place-items:center;border-radius:16px;background:var(--primary);color:#fff;font:800 20px Consolas,monospace; }
+.auth-card h2 { margin-bottom:7px; }.auth-card > p { color:var(--muted);font-size:13px;line-height:1.5; }
+.auth-tabs { display:grid;grid-template-columns:1fr 1fr;margin:24px 0 18px;border-bottom:1px solid var(--border); }
+.tab { border:0;background:transparent;color:var(--muted);padding:11px;cursor:pointer;font-weight:700;border-bottom:2px solid transparent; }
+.tab.active { color:var(--primary);border-bottom-color:var(--primary); }
+.auth-card form { text-align:left; }
+label { display:block;font-size:13px;font-weight:700;margin:13px 0 6px; }
+input,select,textarea { width:100%;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:10px;padding:12px;outline:none;font:inherit; }
+input:focus,select:focus,textarea:focus { border-color:var(--primary); }
+.form-message { min-height:20px;margin-top:12px;font-size:13px;text-align:center;color:#dc2626; }
+.primary-btn,.secondary-btn,.logout-btn,.icon-btn { border:0;border-radius:10px;padding:11px 17px;font-weight:700;cursor:pointer; }
+.primary-btn { background:var(--primary);color:#fff; }.secondary-btn { background:var(--border);color:var(--text); }
+.full-btn { width:100%;margin-top:16px; }
+.logout-btn { background:var(--border);color:var(--text);padding:8px 12px;font-size:12px; }
+.icon-btn { background:transparent;color:var(--text);font-size:19px;padding:7px; }
+.hero { background:linear-gradient(135deg,var(--primary),#7c3aed);color:#fff;border-radius:20px;padding:32px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:var(--shadow); }
+.badge { font-size:11px;font-weight:800;letter-spacing:1px;opacity:.85; }.hero h2{font-size:34px;margin:8px 0}.hero p{opacity:.88}.hero .primary-btn{background:#fff;color:var(--primary);}
+.stats { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0; }
+.stat-card { background:var(--card);border:1px solid var(--border);border-radius:15px;padding:20px;box-shadow:var(--shadow); }
+.stat-card span{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}.stat-card strong{font-size:25px}
+.toolbar{display:flex;gap:12px;margin-bottom:20px}.toolbar select{max-width:200px}
+.code-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.code-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.card-top{padding:17px}.card-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.card-title{font-size:18px;margin-bottom:7px}
+.language{display:inline-block;font-size:11px;font-weight:800;padding:5px 8px;border-radius:999px;background:#ede9fe;color:#5b21b6}
+body.dark .language{background:#312e81;color:#ddd6fe}.card-description{color:var(--muted);font-size:13px;line-height:1.5;margin-top:9px}
+.card-code{background:var(--code-bg);color:#d1d5db;padding:16px;min-height:150px;max-height:230px;overflow:auto;white-space:pre;font:12px/1.6 Consolas,Monaco,monospace}
+.card-actions{padding:12px 16px;display:flex;gap:8px;border-top:1px solid var(--border)}
+.action-btn{border:1px solid var(--border);background:var(--card);color:var(--text);padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12px}
+.empty-state{text-align:center;padding:65px 20px;color:var(--muted);display:none}.empty-state.show{display:block}.empty-icon{font-size:45px;margin-bottom:12px}.empty-state h3{color:var(--text);margin-bottom:7px}.empty-state .primary-btn{margin-top:18px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.58);display:grid;place-items:center;padding:20px;z-index:10}.modal-content{width:min(760px,100%);max-height:92vh;overflow-y:auto;background:var(--card);border-radius:18px;padding:24px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
+.modal-header{display:flex;justify-content:space-between;margin-bottom:20px}.modal-header p{color:var(--muted);font-size:13px}.close-btn{border:0;background:transparent;color:var(--text);font-size:30px;cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.code-input{resize:vertical;min-height:260px;font-family:Consolas,Monaco,monospace}
+.form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.toast{position:fixed;right:22px;bottom:22px;background:#111827;color:#fff;padding:12px 17px;border-radius:10px;transform:translateY(100px);opacity:0;transition:.25s;z-index:20}.toast.show{transform:translateY(0);opacity:1}
+@media(max-width:760px){.hero{flex-direction:column;align-items:flex-start}.hero h2{font-size:27px}.stats,.code-grid{grid-template-columns:1fr}.toolbar{flex-direction:column}.toolbar select{max-width:none}.form-row{grid-template-columns:1fr}.user-name{display:none}.navbar{padding:0 4%;}}
