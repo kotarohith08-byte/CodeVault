@@ -211,15 +211,88 @@ app.post("/api/auth/verify-email", async (req, res) => {
     });
   }
 });
+// Resend Verification Email
+app.post("/api/auth/resend-verification", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required."
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "No account found with this email."
+      });
+    }
+
+    if (user.emailVerified) {
+      return res.status(400).json({
+        message: "Email is already verified."
+      });
+    }
+
+    // Generate a new 6-digit code
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    // Code expires after 10 minutes
+    const verificationExpires = new Date(
+      Date.now() + 10 * 60 * 1000
+    );
+
+    user.verificationCode = verificationCode;
+    user.verificationExpires = verificationExpires;
+
+    await user.save();
+
+    console.log("RESENDING VERIFICATION EMAIL TO:", user.email);
+
+    await sendVerificationEmail(
+      user.email,
+      verificationCode
+    );
+
+    console.log("RESEND EMAIL COMPLETED");
+
+    res.json({
+      message: "A new verification code has been sent to your email."
+    });
+
+  } catch (error) {
+    console.error("Resend verification error:", error);
+
+    res.status(500).json({
+      message: "Could not send verification email."
+    });
+  }
+});
 // Login
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email: (email || "").toLowerCase().trim() });
+    const user = await User.findOne({
+      email: (email || "").toLowerCase().trim()
+    });
 
     if (!user || !(await bcrypt.compare(password || "", user.passwordHash))) {
-      return res.status(401).json({ message: "Invalid email or password." });
+      return res.status(401).json({
+        message: "Invalid email or password."
+      });
+    }
+
+    if (!user.emailVerified) {
+      return res.status(403).json({
+        message: "Please verify your email before logging in."
+      });
     }
 
     const token = createToken(user);
