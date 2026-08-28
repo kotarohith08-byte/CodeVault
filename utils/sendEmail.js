@@ -1,38 +1,42 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendVerificationEmail(email, code) {
   console.log("Attempting to send verification email to:", email);
 
   try {
-    const info = await transporter.sendMail({
-      from: `"CodeVault" <${process.env.EMAIL_USER}>`,
-      to: email,
+    const { data, error } = await resend.emails.send({
+      from: "CodeVault <onboarding@resend.dev>",
+      to: [email],
       subject: "CodeVault Email Verification",
-      text: `Your CodeVault verification code is: ${code}. This code will expire soon.`,
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 30px;">
           <h2>CodeVault Email Verification</h2>
+
           <p>Your verification code is:</p>
-          <h1>${code}</h1>
-          <p>Enter this code on CodeVault to verify your email address.</p>
+
+          <div style="font-size: 32px; font-weight: bold; letter-spacing: 8px; margin: 25px 0;">
+            ${code}
+          </div>
+
+          <p>Enter this code in CodeVault to verify your email address.</p>
+
+          <p>This code will expire soon.</p>
+
           <p>If you did not create this account, you can ignore this email.</p>
         </div>
       `,
     });
 
-    console.log("Verification email sent successfully:", info.messageId);
-    return info;
+    if (error) {
+      console.error("RESEND ERROR:", error);
+      throw new Error(error.message);
+    }
+
+    console.log("Verification email sent successfully:", data.id);
+
+    return data;
   } catch (error) {
     console.error("EMAIL SENDING ERROR:", error);
     throw error;
